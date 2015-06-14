@@ -103,7 +103,7 @@ class p2pBlacklist(BaseSpider):
         print ID
 
         try:
-            info = accPri+"\001"+ovDate[0]+"\001"+liID[0]+"\001"+loNu[0]+"\001"+loTime[0]+"\001"+ovDayNu[0]+"\001"+ovPri[0]+"\001"+prov[0]+"\001"+usrNa[0]+"\001"+name[0]+"\001"+phoneN[0]+"\001"+ID[0]
+            info = accPri[0]+"\001"+ovDate[0]+"\001"+liID[0]+"\001"+loNu[0]+"\001"+loTime[0]+"\001"+ovDayNu[0]+"\001"+ovPri[0]+"\001"+prov[0]+"\001"+usrNa[0]+"\001"+name[0]+"\001"+phoneN[0]+"\001"+ID[0]
             item['content'] = info
             #print item['content'], 'item work'
         except Exception,e:
