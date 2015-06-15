@@ -7,8 +7,8 @@
 
 import os
 
-# os.chdir("/root/dyh/data/blacklist")   #linux only
-os.chdir("E:/DLdata/blacklist")
+os.chdir("/root/dyh/data/blacklist")   #linux only
+# os.chdir("E:/DLdata/blacklist")      #my desktop
 class p2pBlacklistPipeline(object):
     def process_item(self, item, spider):
         # print "pipline work"
