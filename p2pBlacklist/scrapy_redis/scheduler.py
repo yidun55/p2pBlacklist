@@ -1,7 +1,7 @@
 import connection
 
 from scrapy.utils.misc import load_object
-from guba.scrapy_redis.dupefilter import RFPDupeFilter
+from p2pBlacklist.scrapy_redis.dupefilter import RFPDupeFilter
 
 # default values
 SCHEDULER_PERSIST = False

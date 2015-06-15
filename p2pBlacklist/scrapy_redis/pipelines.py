@@ -3,7 +3,7 @@ import connection
 
 from twisted.internet.threads import deferToThread
 from scrapy.utils.serialize import ScrapyJSONEncoder
-from guba.items import GubaPostListItem
+from p2pBlacklist.items import GubaPostListItem
 
 
 class RedisPipeline(object):

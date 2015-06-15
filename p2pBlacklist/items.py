@@ -11,3 +11,9 @@ class p2pBlacklistItem(Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     content = Field()
+
+class GubaPostListItem(Item):
+    """
+    for test
+    """
+    pass
