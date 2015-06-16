@@ -19,5 +19,7 @@ ITEM_PIPELINES=['p2pBlacklist.pipelines.p2pBlacklistPipeline']
 LOG_FILE="/root/dyh/data/blacklist/log"  #linux only
 # LOG_FILE = "E:/DLdata/logging/log"      #my desktop
 
+#CONCURRENT_REQUESTS_PER_DOMAIN = 1    #for test set the ceiling of concurrent request
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'p2pBlacklist (+http://www.yourdomain.com)'

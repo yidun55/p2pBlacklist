@@ -13,16 +13,16 @@ from scrapy.spider import Spider
 # from BeautifulSoup import BeautifulSoup
 from p2pBlacklist.items import *
 #from p2pBlacklist.middlewares import UnknownResponseError
-from p2pBlacklist.scrapy_redis.spiders import RedisSpiderFast
+from p2pBlacklist.scrapy_redis.spiders import RedisSpider
 
 HOST_URL = "http://www.p2pzxw.com/"
 
-class p2pBlacklistRedis(RedisSpiderFast):
+class p2pBlacklistRedis(RedisSpider):
     """usage: scrapy crawl guba_stock_detail_dateback_redis_spider --loglevel=INFO
               爬取股吧中帖子页数据
     """
-    download_delay = 60  #for test
-    name = 'p2p_zxw_redis_spider1' #for test
+    #download_delay = 60  #for test
+    name = 'p2p_zxw_redis_spider2' #for test
     redis_key = 'p2p_zxw_redis_spider:start_urls'
 
     def parse(self, response):

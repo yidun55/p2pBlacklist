@@ -37,7 +37,6 @@ class RedisMixin(object):
 
     def schedule_next_request(self):
         """Schedules a request if available"""
-        time.sleep(60) #for test redis
         req = self.next_request()
         if req:
             self.crawler.engine.crawl(req, spider=self)
