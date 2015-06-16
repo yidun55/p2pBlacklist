@@ -12,6 +12,6 @@ os.chdir("/root/dyh/data/blacklist")   #linux only
 class p2pBlacklistPipeline(object):
     def process_item(self, item, spider):
         # print "pipline work"
-        f = open(spider.name+"result", "a")
+        f = open(spider.writeInFile, "a")
         f.write(item['content']+'\n')
         f.close()
