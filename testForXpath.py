@@ -15,16 +15,8 @@ html = f.read()
 html = bytes(html)
 hxs = Selector(text=html, type='html')
 
-urls = hxs.xpath(u"//tbody/tr//a[contains\
-    (text(),'查看详情')]/@href").extract()
+te = hxs.xpath(u"count(//div[@class='table_nav']//tr)").extract()
 
-
-idNum = hxs.xpath(u"//table[contains(@id,'yw0')]//\
-    th[contains(text(),'身份证号')]/following-sibling::*\
-    /text()").extract()  #身份证号
-
-phone = hxs.xpath(u"//table[contains(@id,'yw0')]//\
-    th[contains(text(),'手机号')]/following-sibling::*\
-    /text()").extract()  #身份证号
-
-print phone
+liID   =  hxs.xpath(u"//table[contains(@class, \
+            'detail_table')]/tr[3]//tr[3]/td[1]/text()").extract()
+print liID

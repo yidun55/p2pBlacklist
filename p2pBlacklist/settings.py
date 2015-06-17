@@ -14,12 +14,44 @@ SPIDER_MODULES = ['p2pBlacklist.spiders']
 NEWSPIDER_MODULE = 'p2pBlacklist.spiders'
 
 DEFAULT_ITEM_CLASS='p2pBlacklist.items.p2pBlacklistItem'
-ITEM_PIPELINES=['p2pBlacklist.pipelines.p2pBlacklistPipeline']
+# ITEM_PIPELINES=['p2pBlacklist.pipelines.p2pBlacklistPipeline']
 
 LOG_FILE="/root/dyh/data/blacklist/log"  #linux only
 # LOG_FILE = "E:/DLdata/logging/log"      #my desktop
 
 #CONCURRENT_REQUESTS_PER_DOMAIN = 1    #for test set the ceiling of concurrent request
 
-# Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'p2pBlacklist (+http://www.yourdomain.com)'
+DOWNLOAD_TIMEOUT = 180
+
+ITEM_PIPELINES = {
+    'p2pBlacklist.pipelines.p2pBlacklistPipeline': 300,
+    # 'guba.pipelines.RedisStoragePipeline': 300,
+    'p2pBlacklist.scrapy_redis.pipelines.RedisPipeline': 400,
+    # 'guba.pipelines.JsonWriterPipeline': 800,
+    # 'guba.pipelines.GubaPipeline': 200
+}
+
+
+# scrapy_redis中redis server的配置, # Specify the host and port to use when connecting to Redis (optional).
+REDIS_HOST = '10.5.13.22'
+REDIS_PORT = 6379
+REDIS_STORAGE_HOST = '10.5.13.22'
+REDIS_STORAGE_PORT = 6379
+
+# Specify the full Redis URL for connecting (optional).
+# If set, this takes precedence over the REDIS_HOST and REDIS_PORT settings.
+# REDIS_URL = 'redis://user:pass@hostname:9001'
+
+# 默认是使用scrapy.core.scheduler.Scheduler，现在使用scrapy_redis中实现的调度器。
+SCHEDULER = "p2pBlacklist.scrapy_redis.scheduler.Scheduler"
+
+# 不清空redis queue，允许爬取过程中暂停并恢复
+SCHEDULER_PERSIST = True
+
+# 默认使用的是SpiderPriorityQueue，也可以换成后两种
+# SCHEDULER_QUEUE_CLASS = 'guba.scrapy_redis.queue.SpiderPriorityQueue'
+# Schedule requests using a queue (FIFO).
+SCHEDULER_QUEUE_CLASS = "p2pBlacklist.scrapy_redis.queue.SpiderQueue"
+# Schedule requests using a stack (LIFO).
+# SCHEDULER_QUEUE_CLASS = "guba.scrapy_redis.queue.SpiderStack"
+
