@@ -16,7 +16,7 @@ def injectUrl(key, values_list):
 
 
 baseUrl = 'http://www.p2pzxw.com/index.asp?Page='
-urls = [baseUrl+str(i) for i in xrange(1,11)]
+urls = [baseUrl+str(i) for i in xrange(1,383)]
 key = 'p2p_zxw_redis_spider:start_urls'
 
 injectUrl(key, urls)

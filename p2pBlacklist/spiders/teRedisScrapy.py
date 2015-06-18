@@ -22,7 +22,7 @@ class p2pBlacklistRedis(RedisSpider):
     """
     #download_delay = 60  #for test
     writeInFile = 'wangdai_p2pzxw'
-    name = 'p2p_zxw_redis_spider2' #for test
+    name = 'p2p_zxw_redis_spider1' #for test
     redis_key = 'p2p_zxw_redis_spider:start_urls'
 
     def for_ominated_data(self,info_list,i_list):

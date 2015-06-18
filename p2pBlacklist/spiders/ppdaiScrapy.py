@@ -20,7 +20,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 class p2pBlacklist(Spider):
-    #download_delay=2
+    download_delay=2
     name = 'pplist'
     start_urls = ['http://www.ppdai.com/blacklist/']
     allowed_domains = ['ppdai.com']
@@ -38,7 +38,7 @@ class p2pBlacklist(Spider):
         url = 'http://www.ppdai.com/blacklist/'
         years = xrange(2008,2016)
         urls = [url+str(year) for year in years]
-        for url in urls[4:5]:
+        for url in urls:
             # print url, "year url"
             yield Request(url, callback=self.extract, dont_filter=True)
 
@@ -61,7 +61,7 @@ class p2pBlacklist(Spider):
         if len(pages) == 0:
             self.getUserName(response)  #only one page
         else:
-            for page in range(int(pages[0]))[0:1]:
+            for page in range(int(pages[0])+1)[1:]:
                 url = response.url+"_m0_p"+str(page)
                 yield Request(url, callback=self.getUserName,dont_filter=True)
 
@@ -75,7 +75,7 @@ class p2pBlacklist(Spider):
         urls = [url+i for i in blackTr]
         redis_key = 'ppai_blacklist_redis_spider:start_urls' 
         #redis_key是根据redisPpdaiScrapy.py中的redis_key设定的
-        for url in urls[0:1]:
+        for url in urls:
             self.__class__.myRedis.lpush(redis_key, url)
 
     # def getDetail(self, response):

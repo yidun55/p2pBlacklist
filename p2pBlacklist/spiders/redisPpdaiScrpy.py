@@ -21,7 +21,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 class p2pBlacklist(RedisSpider):
-    #download_delay=2
+    download_delay=1.5
     writeInFile = 'ppai_blacklist'  #item 写入的文件名
     name = 'ppai_blacklist_redis_spider2' #for test
     redis_key = 'ppai_blacklist_redis_spider:start_urls'
@@ -39,6 +39,7 @@ class p2pBlacklist(RedisSpider):
             assert len(i_list) == 1, "the element must be unique"
             info_list.extend(i_list)
             # print 'you work'
+            print "your".join(info_list), "i'm infolist"
             return info_list
         except Exception, e:
             print 'i work'
@@ -61,29 +62,37 @@ class p2pBlacklist(RedisSpider):
             """
             info = []
             accPri = sel.xpath(u"//table[contains(@class, \
-                'detail_table')]/tr[1]/td[1]/text()").re(ur"累计\
-                借入本金：([\S\s]*)")    #累计借入本金
+                'detail_table')]/tr[1]/td[1]/text()").re(ur"累计借入本金：([\S\s]*)")    #累计借入本金
             info = self.for_ominated_data(info, accPri)
-            ovDate =  sel.xpath(u"//table[contains(@class, \
-            'detail_table')]/tr[1]/td[2]/span/text()").extract()   #最大逾期天数
+            ovDate =  sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[1]/td[2]/span/text()").extract()   #最大逾期天数
             info = self.for_ominated_data(info, ovDate)
-            liID   =  sel.xpath(u"//table[contains(@class, \
-            'detail_table')]/tr[3]//tr[trI]/td[1]/text()").extract()   #列表编号
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[1]/text()"
+            ass = bef + str(trI) + aft
+            liID   =  sel.xpath(ass).extract()   #列表编号
             info = self.for_ominated_data(info, liID)
-            loNu   =   sel.xpath(u"//table[contains(@class, \
-            'detail_table')]/tr[3]//tr[trI]/td[2]/text()").extract()  #借款期数
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[2]/text()"
+            ass = bef + str(trI) + aft
+            loNu   =   sel.xpath(ass).extract()  #借款期数
             info = self.for_ominated_data(info, loNu)
-            loTime =  sel.xpath(u"//table[contains(@class, \
-            'detail_table')]/tr[3]//tr[trI]/td[3]/text()").extract()   #借款时间
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[3]/text()"
+            ass = bef + str(trI) + aft
+            loTime =  sel.xpath(ass).extract()   #借款时间
             info = self.for_ominated_data(info, loTime)
-            ovDayNu =  sel.xpath(u"//table[contains(@class, \
-            'detail_table')]/tr[3]//tr[trI]/td[4]/text()").extract()   #逾期天数
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[4]/text()"
+            ass = bef + str(trI) + aft
+            ovDayNu =  sel.xpath(ass).extract()   #逾期天数
             info = self.for_ominated_data(info, ovDayNu)
-            ovPri   =   sel.xpath(u"//table[contains(@class, \
-            'detail_table')]/tr[3]//tr[trI]/td[5]/text()").extract()  #逾期本息
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[5]/text()"
+            ass = bef + str(trI) + aft
+            ovPri   =   sel.xpath(ass).extract()  #逾期本息
             info = self.for_ominated_data(info, ovPri)
             prov   = sel.xpath(u"//div[contains(@class,\
-            'blacklist_detail_nav')]//li//strong/text()").re(ur"_([\w]*?)_")     #省
+            'blacklist_detail_nav')]//li//strong/text()").re(ur"_([\w]*?)_[男|女]")     #省
             info = self.for_ominated_data(info, prov)
             usrNa  =  sel.xpath(u"//div[contains(@class,\
             'blacklist_detail_nav')]//li").re(ur"用户名：([\w\W]*?)\n")    #用户名

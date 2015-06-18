@@ -7,125 +7,123 @@
   date:2015/06/10
 """
 
-from scrapy.spider import BaseSpider
-from scrapy.http import Request
 from scrapy import log
-import redis
-
+from scrapy.http import Request
+from scrapy.conf import settings
+from scrapy.spider import Spider
 from p2pBlacklist.items import *
+#from p2pBlacklist.middlewares import UnknownResponseError
+from p2pBlacklist.scrapy_redis.spiders import RedisSpider
 
 import sys
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-class p2pBlacklist(BaseSpider):
-    #download_delay=2
-    name = 'redisurl'
-    start_urls = ['http://www.ppdai.com/blacklist/']
-    allowed_domains = ['ppdai.com']
-    myRedis = redis.StrictRedis(host='localhost',port=6379) #connected to redis server
-    def __inti__(self):
-        pass
+class p2pBlacklist(RedisSpider):
+    download_delay=1.5
+    writeInFile = 'ppai_blacklist'  #item 写入的文件名
+    name = 'ppai_blacklist_redis_spider2' #for test
+    redis_key = 'ppai_blacklist_redis_spider:start_urls'
 
-    def make_requests_from_url(self, url):
-        return Request(url, callback=self.gettotal, dont_filter=True)
-
-    def gettotal(self, response):
+    def for_ominated_data(self,info_list,i_list):
         """
-        extract pages from different years
+        some elements are ominated, set the ominated elements
+        as "" 
         """
-        url = 'http://www.ppdai.com/blacklist/'
-        years = xrange(2008,2016)
-        urls = [url+str(year) for year in years]
-        for url in urls[4:5]:
-            print url, "year url"
-            yield Request(url, callback=self.extract, dont_filter=True)
-
-    def extract(self, response):
-        """
-        extract pages and then Request those pages sequecely
-        """
-        print response.url,"extract response url"
-        sel = response.selector
-        pages = []
         try:
-            print "pages work"
-            pages = sel.xpath("//div[contains(@class,'fen_ye_nav')]//td/text()").re(u"共([\d]{1,3})页")
-            print pages
+            if len(i_list) == 0:
+                i_list.append("")
+            else:
+                pass
+            assert len(i_list) == 1, "the element must be unique"
+            info_list.extend(i_list)
+            # print 'you work'
+            print "your".join(info_list), "i'm infolist"
+            return info_list
         except Exception, e:
-            print e,"error pages"
+            print 'i work'
             log.msg(e, level=log.ERROR)
-            log.msg(response.url, level=log.ERROR)
 
-        if len(pages) == 0:
-            self.getUserName(response)  #only one page
-        else:
-            for page in range(int(pages[0]))[0:1]:
-                url = response.url+"_m0_p"+str(page)
-                yield Request(url, callback=self.getUserName,dont_filter=True)
 
-    def getUserName(self, response):
+    def parse(self, response):
         """
-        get user name from xtml
+        extract detail info and store it in items
         """
+        item = p2pBlacklistItem()
         sel = response.selector
-        blackTr = sel.xpath(u"//table[contains(@class,'black_table')]/tr[position()>1]//p[contains(text(),'真实姓名')]/a/@href").extract()
-        url = 'http://www.ppdai.com'
-        urls = [url+i for i in blackTr]
-        for url in urls:
-            myRedis.lpush('ppdai', url)
+        total = sel.xpath(u"count(//div[@class='table_nav']\
+            //tr)").extract()   #借款的笔数
+        total = int(total[0][0])
+        for trI in xrange(2, total+1):
+            """
+            有的用户有多笔的借款
+            trI是不同笔借款所在表格的行数
+            """
+            info = []
+            accPri = sel.xpath(u"//table[contains(@class, \
+                'detail_table')]/tr[1]/td[1]/text()").re(ur"累计借入本金：([\S\s]*)")    #累计借入本金
+            info = self.for_ominated_data(info, accPri)
+            ovDate =  sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[1]/td[2]/span/text()").extract()   #最大逾期天数
+            info = self.for_ominated_data(info, ovDate)
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[1]/text()"
+            ass = bef + str(trI) + aft
+            liID   =  sel.xpath(ass).extract()   #列表编号
+            info = self.for_ominated_data(info, liID)
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[1]/text()"
+            ass = bef + str(trI) + aft
+            loNu   =   sel.xpath(ass).extract()  #借款期数
+            info = self.for_ominated_data(info, loNu)
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[1]/text()"
+            ass = bef + str(trI) + aft
+            loTime =  sel.xpath(ass).extract()   #借款时间
+            info = self.for_ominated_data(info, loTime)
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[1]/text()"
+            ass = bef + str(trI) + aft
+            ovDayNu =  sel.xpath(ass).extract()   #逾期天数
+            info = self.for_ominated_data(info, ovDayNu)
+            bef = u"//table[contains(@class, 'detail_table')]/tr[3]//tr["
+            aft = u"]/td[1]/text()"
+            ass = bef + str(trI) + aft
+            ovPri   =   sel.xpath(ass).extract()  #逾期本息
+            info = self.for_ominated_data(info, ovPri)
+            prov   = sel.xpath(u"//div[contains(@class,\
+            'blacklist_detail_nav')]//li//strong/text()").re(ur"_([\w]*?)_[男|女]")     #省
+            info = self.for_ominated_data(info, prov)
+            usrNa  =  sel.xpath(u"//div[contains(@class,\
+            'blacklist_detail_nav')]//li").re(ur"用户名：([\w\W]*?)\n")    #用户名
+            info = self.for_ominated_data(info, usrNa)
+            name   =  sel.xpath(u"//div[contains(@class,\
+            'blacklist_detail_nav')]//li").re(ur"姓名：([\w\W]*?)\n")    #姓名
+            info = self.for_ominated_data(info, name)
+            phoneN =  sel.xpath(u"//div[contains(@class,\
+            'blacklist_detail_nav')]//li").re(ur"手机号：([\w\W]*?)\n")    #手机号
+            info = self.for_ominated_data(info, phoneN)
+            ID     =   sel.xpath(u"//div[contains(@class,\
+            'blacklist_detail_nav')]//li").re(ur"身份证号：([\w\W]*?)\n")   #身份证号
+            info = self.for_ominated_data(info, ID)
+
+            try:
+                info = '\001'.join(info)
+                item['content'] = info
+                yield item
+            except Exception, e:
+                log.msg('ERROR:{url}'.format(url=response.url),\
+                    level=log.ERROR)
 
 
-#    def getDetail(self, response):
-#        """
-#        extract detail info and store it in items
-#        """
-#        item = p2pBlacklistItem()
-#        print response.url, "this is the response url"
-#        sel = response.selector
-#        accPri = sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[1]/td[1]/text()").re(ur"累计借入本金：([\S\s]*)")    #累计借入本金
-#        ovDate =  sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[1]/td[2]/span/text()").extract()   #最大逾期天数
-#        liID   =  sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[3]//tr[2]/td[1]/text()").extract()   #列表编号
-#        loNu   =   sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[3]//tr[2]/td[2]/text()").extract()  #借款基数
-#        print loNu[0]
-#        loTime =  sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[3]//tr[2]/td[3]/text()").extract()   #借款时间
-#        print loTime[0]
-#        ovDayNu =  sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[3]//tr[2]/td[4]/text()").extract()   #逾期天数
-#        print ovDayNu[0]
-#        ovPri   =   sel.xpath(u"//table[contains(@class, 'detail_table')]/tr[3]//tr[2]/td[5]/text()").extract()  #逾期本息
-#        print ovPri
-#        prov   = sel.xpath(u"//div[contains(@class,'blacklist_detail_nav')]//li//strong/text()").re(ur"_([\w]*?)_")     #省
-#        print prov[0]
-#        usrNa  =  sel.xpath(u"//div[contains(@class,'blacklist_detail_nav')]//li").re(ur"用户名：([\w\W]*?)\n")    #用户名
-#        print usrNa[0]
-#        name   =  sel.xpath(u"//div[contains(@class,'blacklist_detail_nav')]//li").re(ur"姓名：([\w\W]*?)\n")    #姓名
-#        print name[0]
-#        phoneN =  sel.xpath(u"//div[contains(@class,'blacklist_detail_nav')]//li").re(ur"手机号：([\w\W]*?)\n")    #手机号
-#        print phoneN[0]
-#        ID     =   sel.xpath(u"//div[contains(@class,'blacklist_detail_nav')]//li").re(ur"身份证号：([\w\W]*?)\n")   #身份证号
-#        print ID
-#
-#        try:
-#            info = accPri+"\001"+ovDate[0]+"\001"+liID[0]+"\001"+loNu[0]+"\001"+loTime[0]+"\001"+ovDayNu[0]+"\001"+ovPri[0]+"\001"+prov[0]+"\001"+usrNa[0]+"\001"+name[0]+"\001"+phoneN[0]+"\001"+ID[0]
-#            item['content'] = info
-#            #print item['content'], 'item work'
-#        except Exception,e:
-#            #print e,"try 2"
-#            log.msg(response.url, level=log.ERROR)
-#            log.msg(e, level=log.ERROR)
-#
-#        yield item
-#
-#            
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
+
+
+
+
+
+
+
+
+
+
+
