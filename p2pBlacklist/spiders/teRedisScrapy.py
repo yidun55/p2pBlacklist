@@ -13,6 +13,7 @@ from scrapy.spider import Spider
 from p2pBlacklist.items import *
 #from p2pBlacklist.middlewares import UnknownResponseError
 from p2pBlacklist.scrapy_redis.spiders import RedisSpider
+import time
 
 HOST_URL = "http://www.p2pzxw.com/"
 
@@ -24,6 +25,7 @@ class p2pBlacklistRedis(RedisSpider):
     writeInFile = 'wangdai_p2pzxw'
     name = 'p2p_zxw_redis_spider1' #for test
     redis_key = 'p2p_zxw_redis_spider:start_urls'
+    last_update = '2014-12-20'    #上一批数据的最后更新时间：格式Y-M-D
 
     def for_ominated_data(self,info_list,i_list):
         """
@@ -52,51 +54,58 @@ class p2pBlacklistRedis(RedisSpider):
 
         blocks = sel.xpath(u"//div[@class='yqsj_kk']")
         for block in blocks:
-            item = p2pBlacklistItem()
-            info = []
-            name = block.xpath(u".//div[contains(text(),'姓名：')]\
-                /font/text()").extract()   #姓名
-            info = self.for_ominated_data(info_list=info, i_list=name)
-            ID = block.xpath(u".//div[contains(text(),'证件号：')]\
-                /font/text()").extract()   #证件号
-            info = self.for_ominated_data(info, ID)
-            sex = block.xpath(u".//div[contains(text(),'性别：')]\
-                /text()").re(u"性别：([\w]*)")   #性别
-            info = self.for_ominated_data(info, sex)
-            IDAddr = block.xpath(u".//div[contains(text(),'身份证地址：')]\
-                /text()").re(u"身份证地址：([\w]*)")   #身份证地址
-            info = self.for_ominated_data(info, IDAddr)
-            FDddr = block.xpath(u".//div[contains(text(),'家庭地址：')]\
-                /text()").re(u"家庭地址：([\w]*)")   #家庭地址
-            info = self.for_ominated_data(info, FDddr)
-            Tel = block.xpath(u".//div[contains(text(),'联系电话：')]\
-                /text()").re(u"联系电话：([\w]*)")   #联系电话
-            info = self.for_ominated_data(info, Tel)
-            balDue = block.xpath(u".//div[contains(text(),'欠款本息总额：￥')]\
-                /font/text()").extract()   #欠款本息总额
-            info = self.for_ominated_data(info, balDue)
-            dInterest = block.xpath(u".//div[contains(text(),'逾期总罚息：')]\
-                /text()").re(u"逾期总罚息：([\w\W]*)")   #逾期总罚息
-            info = self.for_ominated_data(info, dInterest)
-            YQBX = block.xpath(u".//div[contains(text(),'逾期笔数：')]\
-                /text()").re(u"逾期笔数：([\w\W]*)")   #逾期笔数
-            info = self.for_ominated_data(info, YQBX)
-            WZDH = block.xpath(u".//div[contains(text(),'网站代还笔数：')]\
-                /text()").re(u"网站代还笔数：([\w\W]*)")   #网站代还笔数
-            info = self.for_ominated_data(info, WZDH)
-            ZCYJ = block.xpath(u".//div[contains(text(),'最长逾期天数：')]\
-                /text()").re(u"最长逾期天数：([\w\W]*)")   #最长逾期天数
-            info = self.for_ominated_data(info,ZCYJ)
             GXSJ = block.xpath(u".//div[contains(text(),'更新时间：')]\
                 /text()").re(u"更新时间：([\w\W]*)")   #更新时间
-            info = self.for_ominated_data(info,GXSJ)
-            # print "\001".join(info)
-            try:
-                info = '\001'.join(info)
-                item['content'] = info
-                yield item
-            except Exception, e:
-                log.msg('ERROR:{url}'.format(url=response.url),\
-                    level=log.ERROR)
+            tm_struct = time.strptime(GXSJ[0],'%Y-%m-%d')
+            update_time = time.mktime(tm_struct)   #记录的更新时间
+            l_struct = time.strptime(self.last_update,'%Y-%m-%d')
+            last_updata_time = time.mktime(l_struct)
+            if update_time > last_updata_time:
+                item = p2pBlacklistItem()
+                info = []
+                name = block.xpath(u".//div[contains(text(),'姓名：')]\
+                    /font/text()").extract()   #姓名
+                info = self.for_ominated_data(info_list=info, i_list=name)
+                ID = block.xpath(u".//div[contains(text(),'证件号：')]\
+                    /font/text()").extract()   #证件号
+                info = self.for_ominated_data(info, ID)
+                sex = block.xpath(u".//div[contains(text(),'性别：')]\
+                    /text()").re(u"性别：([\w]*)")   #性别
+                info = self.for_ominated_data(info, sex)
+                IDAddr = block.xpath(u".//div[contains(text(),'身份证地址：')]\
+                    /text()").re(u"身份证地址：([\w]*)")   #身份证地址
+                info = self.for_ominated_data(info, IDAddr)
+                FDddr = block.xpath(u".//div[contains(text(),'家庭地址：')]\
+                    /text()").re(u"家庭地址：([\w]*)")   #家庭地址
+                info = self.for_ominated_data(info, FDddr)
+                Tel = block.xpath(u".//div[contains(text(),'联系电话：')]\
+                    /text()").re(u"联系电话：([\w]*)")   #联系电话
+                info = self.for_ominated_data(info, Tel)
+                balDue = block.xpath(u".//div[contains(text(),'欠款本息总额：￥')]\
+                    /font/text()").extract()   #欠款本息总额
+                info = self.for_ominated_data(info, balDue)
+                dInterest = block.xpath(u".//div[contains(text(),'逾期总罚息：')]\
+                    /text()").re(u"逾期总罚息：([\w\W]*)")   #逾期总罚息
+                info = self.for_ominated_data(info, dInterest)
+                YQBX = block.xpath(u".//div[contains(text(),'逾期笔数：')]\
+                    /text()").re(u"逾期笔数：([\w\W]*)")   #逾期笔数
+                info = self.for_ominated_data(info, YQBX)
+                WZDH = block.xpath(u".//div[contains(text(),'网站代还笔数：')]\
+                    /text()").re(u"网站代还笔数：([\w\W]*)")   #网站代还笔数
+                info = self.for_ominated_data(info, WZDH)
+                ZCYJ = block.xpath(u".//div[contains(text(),'最长逾期天数：')]\
+                    /text()").re(u"最长逾期天数：([\w\W]*)")   #最长逾期天数
+                info = self.for_ominated_data(info,ZCYJ)
+                GXSJ = block.xpath(u".//div[contains(text(),'更新时间：')]\
+                    /text()").re(u"更新时间：([\w\W]*)")   #更新时间
+                info = self.for_ominated_data(info,GXSJ)
+                # print "\001".join(info)
+                try:
+                    info = '\001'.join(info)
+                    item['content'] = info
+                    yield item
+                except Exception, e:
+                    log.msg('ERROR:{url}'.format(url=response.url),\
+                        level=log.ERROR)
             
 
