@@ -7,10 +7,11 @@
 
 import os
 
-os.chdir("/root/dyh/data/blacklist")
-class P2PblacklistPipeline(object):
+os.chdir("/root/dyh/data/blacklist")   #linux only
+# os.chdir("E:/DLdata/blacklist")      #my desktop
+class p2pBlacklistPipeline(object):
     def process_item(self, item, spider):
-        print "pipline work"
-        f = open("ppdai", "a")
+        # print "pipline work"
+        f = open(spider.writeInFile, "a")
         f.write(item['content']+'\n')
         f.close()

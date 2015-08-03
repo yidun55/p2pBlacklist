@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'p2pBlacklist.spiders'
 DEFAULT_ITEM_CLASS='p2pBlacklist.items.p2pBlacklistItem'
 # ITEM_PIPELINES=['p2pBlacklist.pipelines.p2pBlacklistPipeline']
 
-LOG_FILE="/root/dyh/data/blacklist/log_dai_lian_meng"  #linux only
+LOG_FILE="/home/dyh/data/blacklist/log_dai_lian_meng"  #linux only
 # LOG_FILE = "E:/DLdata/logging/log"      #my desktop
 
 #CONCURRENT_REQUESTS_PER_DOMAIN = 1    #for test set the ceiling of concurrent request
