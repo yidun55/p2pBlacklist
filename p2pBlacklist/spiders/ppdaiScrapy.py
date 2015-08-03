@@ -30,12 +30,11 @@ class p2pBlacklist(Spider):
         将已下载数据的用户名加入redis set中以备下一步的
         url去重
         """
-        file_path = "/home/dyh/data/blacklist/\
-        ppai_blacklist1/ppai_blacklist"
+        file_path = "/home/dyh/data/blacklist/ppai_blacklist1/ppai_blacklist"
         f = open(file_path, "r")
         self.dup_ppai_key = "ppai_dup_redis"
         for line in f:
-            self.myRedis.sadd(self.dup_ppai_key,line.splite("\001")[8])
+            self.myRedis.sadd(self.dup_ppai_key,line.split("\001")[8])
 
 
     def make_requests_from_url(self, url):
@@ -71,7 +70,7 @@ class p2pBlacklist(Spider):
         if len(pages) == 0:
             self.getUserName(response)  #only one page
         else:
-            for page in range(int(pages[0])+1)[1:]:
+            for page in range(int(pages[0])+1)[1:]: #fro test
                 url = response.url+"_m0_p"+str(page)
                 yield Request(url, callback=self.getUserName,dont_filter=True)
 
@@ -89,7 +88,7 @@ class p2pBlacklist(Spider):
         for url in urls:
             #如果redis set ppai_dup_redis没有则插入并返回1，否则
             #返回0
-            isinserted = self.myRedis.sadd(self.dup_ppai_key,url.splite("/")[-1])
+            isinserted = self.myRedis.sadd(self.dup_ppai_key,url.split("/")[-1])
             if isinserted:
                 self.__class__.myRedis.lpush(redis_key, url)
 

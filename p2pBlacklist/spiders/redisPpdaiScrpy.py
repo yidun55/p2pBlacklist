@@ -14,6 +14,7 @@ from scrapy.spider import Spider
 from p2pBlacklist.items import *
 #from p2pBlacklist.middlewares import UnknownResponseError
 from p2pBlacklist.scrapy_redis.spiders import RedisSpider
+import time
 
 import sys
 
@@ -37,7 +38,7 @@ class p2pBlacklist(RedisSpider):
             else:
                 pass
             assert len(i_list) == 1, "the element must be unique"
-            info_list.extend(i_list)
+            info_list.append(i_list[0].strip())
             # print 'you work'
             return info_list
         except Exception, e:
@@ -107,6 +108,7 @@ class p2pBlacklist(RedisSpider):
             info = self.for_ominated_data(info, ID)
 
             try:
+                info.append(str(time.strftime("%Y年%m月%d日")))
                 info = '\001'.join(info)
                 item['content'] = info
                 yield item

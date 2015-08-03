@@ -66,3 +66,49 @@ Traceback (most recent call last):
 KeyError: 'Spider not found: dai_lian_meng_redis_spider:start_urls'
 /home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/wangdai.py:21: ScrapyDeprecationWarning: p2pBlacklist.spiders.wangdai.p2pBlacklist inherits from deprecated class scrapy.spider.BaseSpider, please inherit from scrapy.spider.Spider. (warning only on first subclass, there may be others)
   class p2pBlacklist(BaseSpider):
+/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/wangdai.py:21: ScrapyDeprecationWarning: p2pBlacklist.spiders.wangdai.p2pBlacklist inherits from deprecated class scrapy.spider.BaseSpider, please inherit from scrapy.spider.Spider. (warning only on first subclass, there may be others)
+  class p2pBlacklist(BaseSpider):
+Traceback (most recent call last):
+  File "/usr/local/bin/scrapy", line 11, in <module>
+    sys.exit(execute())
+  File "/usr/local/lib/python2.7/site-packages/scrapy/cmdline.py", line 143, in execute
+    _run_print_help(parser, _run_command, cmd, args, opts)
+  File "/usr/local/lib/python2.7/site-packages/scrapy/cmdline.py", line 89, in _run_print_help
+    func(*a, **kw)
+  File "/usr/local/lib/python2.7/site-packages/scrapy/cmdline.py", line 150, in _run_command
+    cmd.run(args, opts)
+  File "/usr/local/lib/python2.7/site-packages/scrapy/commands/crawl.py", line 58, in run
+    spider = crawler.spiders.create(spname, **opts.spargs)
+  File "/usr/local/lib/python2.7/site-packages/scrapy/spidermanager.py", line 48, in create
+    return spcls(**spider_kwargs)
+  File "/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/ppdaiScrapy.py", line 35, in __init__
+    f = open(file_path, "r")
+IOError: [Errno 2] No such file or directory: '/home/dyh/data/blacklist/        ppai_blacklist1/ppai_blacklist'
+/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/wangdai.py:21: ScrapyDeprecationWarning: p2pBlacklist.spiders.wangdai.p2pBlacklist inherits from deprecated class scrapy.spider.BaseSpider, please inherit from scrapy.spider.Spider. (warning only on first subclass, there may be others)
+  class p2pBlacklist(BaseSpider):
+Traceback (most recent call last):
+  File "/usr/local/bin/scrapy", line 11, in <module>
+    sys.exit(execute())
+  File "/usr/local/lib/python2.7/site-packages/scrapy/cmdline.py", line 143, in execute
+    _run_print_help(parser, _run_command, cmd, args, opts)
+  File "/usr/local/lib/python2.7/site-packages/scrapy/cmdline.py", line 89, in _run_print_help
+    func(*a, **kw)
+  File "/usr/local/lib/python2.7/site-packages/scrapy/cmdline.py", line 150, in _run_command
+    cmd.run(args, opts)
+  File "/usr/local/lib/python2.7/site-packages/scrapy/commands/crawl.py", line 58, in run
+    spider = crawler.spiders.create(spname, **opts.spargs)
+  File "/usr/local/lib/python2.7/site-packages/scrapy/spidermanager.py", line 48, in create
+    return spcls(**spider_kwargs)
+  File "/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/ppdaiScrapy.py", line 37, in __init__
+    self.myRedis.sadd(self.dup_ppai_key,line.splite("\001")[8])
+AttributeError: 'str' object has no attribute 'splite'
+/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/wangdai.py:21: ScrapyDeprecationWarning: p2pBlacklist.spiders.wangdai.p2pBlacklist inherits from deprecated class scrapy.spider.BaseSpider, please inherit from scrapy.spider.Spider. (warning only on first subclass, there may be others)
+  class p2pBlacklist(BaseSpider):
+/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/wangdai.py:21: ScrapyDeprecationWarning: p2pBlacklist.spiders.wangdai.p2pBlacklist inherits from deprecated class scrapy.spider.BaseSpider, please inherit from scrapy.spider.Spider. (warning only on first subclass, there may be others)
+  class p2pBlacklist(BaseSpider):
+/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/wangdai.py:21: ScrapyDeprecationWarning: p2pBlacklist.spiders.wangdai.p2pBlacklist inherits from deprecated class scrapy.spider.BaseSpider, please inherit from scrapy.spider.Spider. (warning only on first subclass, there may be others)
+  class p2pBlacklist(BaseSpider):
+/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/wangdai.py:21: ScrapyDeprecationWarning: p2pBlacklist.spiders.wangdai.p2pBlacklist inherits from deprecated class scrapy.spider.BaseSpider, please inherit from scrapy.spider.Spider. (warning only on first subclass, there may be others)
+  class p2pBlacklist(BaseSpider):
+/home/dyh/spiders/p2pBlacklist/p2pBlacklist/spiders/wangdai.py:21: ScrapyDeprecationWarning: p2pBlacklist.spiders.wangdai.p2pBlacklist inherits from deprecated class scrapy.spider.BaseSpider, please inherit from scrapy.spider.Spider. (warning only on first subclass, there may be others)
+  class p2pBlacklist(BaseSpider):

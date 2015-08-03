@@ -14,6 +14,7 @@ from scrapy.spider import Spider
 from p2pBlacklist.items import *
 #from p2pBlacklist.middlewares import UnknownResponseError
 from p2pBlacklist.scrapy_redis.spiders import RedisSpider
+import time
 
 import sys
 
@@ -125,6 +126,7 @@ class p2pBlacklist(RedisSpider):
         info = self.for_ominated_data(info, ZJDZ)
 
         try:
+            info.append(str(time.strftime("%Y年%m月%d日")))
             info = '\001'.join(info)
             item['content'] = info
             yield item

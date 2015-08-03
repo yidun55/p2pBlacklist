@@ -21,7 +21,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 class p2pBlacklist(RedisSpider):
-    #download_delay=2
+    download_delay=1
     writeInFile = 'dailianmeng_blacklist'  #item 写入的文件名
     name = 'dai_lian_meng_redis_spider2' #for test
     redis_key = 'dai_lian_meng_redis_spider:start_urls'

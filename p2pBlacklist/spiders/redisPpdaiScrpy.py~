@@ -37,7 +37,7 @@ class p2pBlacklist(RedisSpider):
             else:
                 pass
             assert len(i_list) == 1, "the element must be unique"
-            info_list.extend(i_list)
+            info_list.append(i_list[0].strip())
             # print 'you work'
             return info_list
         except Exception, e:
